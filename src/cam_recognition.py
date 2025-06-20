@@ -49,8 +49,18 @@ class CamRecognition:
                 break
 
 
-    def send_frame(self):
+    def send_photo(self):
         ...
+
+    @staticmethod
+    def cut_face(frame, face_location):
+        top, right, bottom, left = face_location
+        top *= 4
+        right *= 4
+        bottom *= 4
+        left *= 4
+        face_img = frame[top:bottom, left:right]
+        return face_img
 
 
     def frame_recognition(self):
