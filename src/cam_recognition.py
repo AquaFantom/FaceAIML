@@ -99,6 +99,4 @@ class CamRecognition:
                     #self.ids.append(id)
 
 
-                    #TODO: необходимо сделать некоторую паузу после распознания лица или на бэк части не выводить одного и того же человека
-
         self.process_this_frame = not self.process_this_frame
