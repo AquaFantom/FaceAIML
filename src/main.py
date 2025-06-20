@@ -6,8 +6,14 @@ from cam_recognition import CamRecognition
 
 video_capture = cv2.VideoCapture(0)
 cam_recognition = CamRecognition(video_capture)
+# получение данных с бд (айди, фото)
+# заполнение столбца encodings
 while True:
-    # получение данных с бд / изменение пользователей и т.п.
-    # перевод фото в encodings если у новой записи в бд пустой "face_encoding" -> запись кодировки в бд
-    # заполнение полей cam_recognition
+    # запрос об изменениях в бд
+    # если запись новая / изменена:
+        # перевод фото в encodings
+        # запись нового encoding в бд
+        # выполнение add / update encoding
+    # если запись удалена - выполнение delete encoding
+    # выполнение fill_known_faces
     cam_recognition.frame_recognition()

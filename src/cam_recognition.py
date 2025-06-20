@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import face_recognition
 import cv2
 import numpy as np
+from time import time
 
 
 @dataclass
@@ -16,10 +17,16 @@ class CamRecognition:
         self.video_capture = video_capture
         self.face_locations = []
         self.known_faces = []
-        self.ids = []
-        self.face_encodings = []
+        self.prev_id = -1
+        self.waiting_time = time()
+        #self.ids = []
+        #self.face_encodings = []
         self.process_this_frame = True
+        if known_ids is not None:
+            self.fill_known_faces(known_ids, known_face_encodings)
 
+
+    def fill_known_faces(self, known_ids, known_face_encodings):
         for id, face_encoding, face_name in zip(known_ids, known_face_encodings):
             self.known_faces.append(Face(id, face_encoding))
 
@@ -50,10 +57,8 @@ class CamRecognition:
         ret, frame = self.video_capture.read()
 
         if self.process_this_frame:
-            # Resize frame of video to 1/4 size for faster face recognition processing
             small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
-            # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
             rgb_small_frame = small_frame[:, :, ::-1]
 
             face_locations = face_recognition.face_locations(rgb_small_frame)
@@ -61,19 +66,28 @@ class CamRecognition:
             if face_locations:
                 face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
-                self.ids = []
+                #self.ids = []
                 for face_encoding in face_encodings:
-                    # See if the face is a match for the known face(s)
                     matches = face_recognition.compare_faces([face.face_encoding for face in self.known_faces], face_encoding)
-                    id = -1
+                    id = 0 # индекс "неизвестного сотрудника"
 
-                    # Use the known face with the smallest distance to the new face
                     face_distances = face_recognition.face_distance([face.face_encoding for face in self.known_faces], face_encoding)
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
                         id = self.known_faces[best_match_index].id
 
-                    self.ids.append(id)
+                    if self.prev_id == id and self.waiting_time - time() < 60:
+                        return
+
+                    self.waiting_time = time()
+                    if id == 0:
+                        # послать информацию о неизвестном сотруднике и ждать реакции бэка
+                        ...
+                    else:
+                        # послать информацию о сотруднике и кадр с лицом
+                        ...
+                    #self.ids.append(id)
+
 
                     #TODO: необходимо сделать некоторую паузу после распознания лица или на бэк части не выводить одного и того же человека
 
