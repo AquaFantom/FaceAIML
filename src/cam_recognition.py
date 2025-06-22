@@ -5,6 +5,8 @@ import cv2
 import numpy as np
 from time import time
 
+from src.database.schemas import EmployeeEncoding
+
 
 @dataclass
 class Face:
@@ -86,7 +88,7 @@ class CamRecognition:
                     if matches[best_match_index]:
                         id = self.known_faces[best_match_index].id
 
-                    if self.prev_id == id and self.waiting_time - time() < 60:
+                    if self.prev_id == id and time() - self.waiting_time < 60:
                         return
 
                     self.waiting_time = time()

@@ -69,7 +69,7 @@ class Database:
             self.encodings_count += 1
             return True
 
-    def check_deleted_encodings(self):
+    def check_employees_without_encodings(self):
         """
         Проверяет был ли удалён энкодинг
         :return:
