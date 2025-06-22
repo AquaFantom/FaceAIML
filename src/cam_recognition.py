@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 import face_recognition
 import cv2
 import numpy as np
@@ -64,7 +62,6 @@ class CamRecognition:
                         return
 
                     self.waiting_time = time()
-
-
+                    return id, self.get_timestamp()
 
         self.process_this_frame = not self.process_this_frame
