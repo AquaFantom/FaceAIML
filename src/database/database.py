@@ -105,8 +105,19 @@ class Database:
 
 
 # ТЕСТ / ПРИМЕР
-URL = "тут должен быть URL базы!"
-database = Database(URL)
+
+from dotenv import load_dotenv
+import os
+from src.utils.backend_connection import Backend
+
+load_dotenv()
+DB_URL = os.getenv('DB_URL')
+BACKEND_URL = os.getenv('BACKEND_URL')
+DB_ROOT_PASSWORD = os.getenv('ROOT_PASSWORD')
+
+database = Database(DB_URL)
+backend = Backend(BACKEND_URL, DB_ROOT_PASSWORD)
+
 encoding = np.array([0.2123123, 0.21312312, 0.354353453])
 database.add_employee_encoding(1, encoding)
 
@@ -118,4 +129,7 @@ employees = database.get_employees_without_encodings()
 for i in employees:
     print(i.id)
 
-print(database.add_access_log(0, "2024-12-12 12:25:10"))
+res = database.add_access_log(0, "2025-12-12 12:26:10")
+if res:
+    # После добавления прохода в базу обязательно уведомляем бэк
+    backend.notify_access_log(False)
