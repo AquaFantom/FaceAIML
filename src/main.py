@@ -28,16 +28,16 @@ class MLApp:
 
     def main(self):
         self.fill_empty_encodings()
-        employee_encodings = self.database.get_employee_encodings()
+        employees_encodings = self.database.get_employee_encodings()
 
         video_capture = cv2.VideoCapture(0)
-        cam_recognition = CamRecognition(video_capture)
-        #cam_recognition.fill_known_faces()
+        cam_recognition = CamRecognition(video_capture, employees_encodings)
         while True:
             if time() - self.db_request_time >= 60:
                 if not self.database.check_employees_without_encodings():
                     self.fill_empty_encodings()
-                    # выполнение fill_known_faces
+                    employees_encodings = self.database.get_employee_encodings()
+                    cam_recognition.set_known_employees_encodings(employees_encodings)
             cam_recognition.frame_recognition()
 
 
