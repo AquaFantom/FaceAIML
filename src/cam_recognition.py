@@ -4,8 +4,6 @@ import numpy as np
 from time import time
 from datetime import datetime
 
-from src.database.schemas import EmployeeEncoding
-
 
 class CamRecognition:
     def __init__(self, video_capture, known_employees_encodings=None):
@@ -20,9 +18,6 @@ class CamRecognition:
     def set_known_employees_encodings(self, known_employees_encodings):
         self.known_employees_encodings = known_employees_encodings
 
-
-    def send_photo(self):
-        ...
 
     @staticmethod
     def cut_face(frame, face_location):
@@ -59,9 +54,11 @@ class CamRecognition:
                         id = self.known_employees_encodings[best_match_index].employee_id
 
                     if self.prev_id == id and time() - self.waiting_time < 60:
-                        return
+                        return None, None
 
                     self.waiting_time = time()
-                    return id, self.get_timestamp()
+
+                    face_img = self.cut_face(frame, face_locations[0])
+                    return id, self.get_timestamp(), face_img
 
         self.process_this_frame = not self.process_this_frame

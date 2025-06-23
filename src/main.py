@@ -13,6 +13,7 @@ class MLApp:
     def __init__(self, url):
         self.database = Database(url)
         self.db_request_time = time()
+        self.log_root = "static/log/"
 
 
     def fill_encoding(self, employee: Employee):
@@ -38,9 +39,11 @@ class MLApp:
                     self.fill_empty_encodings()
                     employees_encodings = self.database.get_employee_encodings()
                     cam_recognition.set_known_employees_encodings(employees_encodings)
-            employee_id, timestamp = cam_recognition.frame_recognition()
+            employee_id, timestamp, face_img = cam_recognition.frame_recognition()
             if employee_id:
-                self.database.add_access_log(employee_id, timestamp)
+                log_id = self.database.add_access_log(employee_id, timestamp)
+                if log_id:
+                    cv2.imwrite(self.log_root + str(log_id) + ".png", face_img)
 
 
 if __name__ == '__main__':
