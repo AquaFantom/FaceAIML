@@ -65,7 +65,7 @@ class CamRecognition:
 
                 face_locations = face_recognition.face_locations(rgb_small_frame)
                 if face_locations:
-                    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+                    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations[0])
                     for face_encoding in face_encodings:
                         matches = face_recognition.compare_faces([face.face_encoding for face in self.known_employees_encodings], face_encoding)
                         best_match_employee = EmployeeEncoding(id=0, employee_id=0, encoding=np.array([0]), is_access=False) # неизвестный сотрудник
