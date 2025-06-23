@@ -77,11 +77,13 @@ class CamRecognition:
                         id = best_match_employee.employee_id
 
                     if self.prev_id == id and time() - self.waiting_time < 60:
-                        return False, "", ""
+                        return None, None, None
 
                     self.waiting_time = time()
 
                     face_img = self.cut_face(frame, face_locations[0])
                     return best_match_employee, self.get_timestamp(), face_img
+            else:
+                return None, None, None
 
         self.process_this_frame = not self.process_this_frame
