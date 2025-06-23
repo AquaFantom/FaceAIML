@@ -54,7 +54,7 @@ class CamRecognition:
     def frame_recognition(self):
         """
         Распознаёт лицо на каждом втором кадре.
-        :return: Распознанного сотрудника
+        :return: Распознанного сотрудника, timestamp, изображение с лицом.
         """
         ret, frame = self.video_capture.read()
 
@@ -77,7 +77,7 @@ class CamRecognition:
                         id = best_match_employee.employee_id
 
                     if self.prev_id == id and time() - self.waiting_time < 60:
-                        return
+                        return False, "", ""
 
                     self.waiting_time = time()
 
