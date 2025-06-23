@@ -99,9 +99,9 @@ class Database:
                 access_log = AccessLogModel(id=log_id, employee_id=employee_id,
                                             timestamp=timestamp, photo_url=str(log_id))
                 self.add(session, access_log)
-                return True
+                return log_id
             else:
-                return False
+                return None
 
 
 # ТЕСТ / ПРИМЕР
