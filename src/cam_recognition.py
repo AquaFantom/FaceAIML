@@ -56,34 +56,33 @@ class CamRecognition:
         Распознаёт лицо на каждом втором кадре.
         :return: Распознанного сотрудника, timestamp, изображение с лицом.
         """
-        ret, frame = self.video_capture.read()
+        while True:
+            ret, frame = self.video_capture.read()
 
-        if self.process_this_frame:
-            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-            rgb_small_frame = small_frame[:, :, ::-1]
+            if self.process_this_frame:
+                small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+                rgb_small_frame = small_frame[:, :, ::-1]
 
-            face_locations = face_recognition.face_locations(rgb_small_frame)
-            if face_locations:
-                face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
-                for face_encoding in face_encodings:
-                    matches = face_recognition.compare_faces([face.face_encoding for face in self.known_employees_encodings], face_encoding)
-                    best_match_employee = EmployeeEncoding(id=0, employee_id=0, encoding=np.array([0]), is_access=False) # неизвестный сотрудник
-                    id = 0 # индекс неизвестного сотрудника
+                face_locations = face_recognition.face_locations(rgb_small_frame)
+                if face_locations:
+                    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+                    for face_encoding in face_encodings:
+                        matches = face_recognition.compare_faces([face.face_encoding for face in self.known_employees_encodings], face_encoding)
+                        best_match_employee = EmployeeEncoding(id=0, employee_id=0, encoding=np.array([0]), is_access=False) # неизвестный сотрудник
+                        id = 0 # индекс неизвестного сотрудника
 
-                    face_distances = face_recognition.face_distance([face.face_encoding for face in self.known_employees_encodings], face_encoding)
-                    best_match_index = np.argmin(face_distances)
-                    if matches[best_match_index]:
-                        best_match_employee = self.known_employees_encodings[best_match_index]
-                        id = best_match_employee.employee_id
+                        face_distances = face_recognition.face_distance([face.face_encoding for face in self.known_employees_encodings], face_encoding)
+                        best_match_index = np.argmin(face_distances)
+                        if matches[best_match_index]:
+                            best_match_employee = self.known_employees_encodings[best_match_index]
+                            id = best_match_employee.employee_id
 
-                    if self.prev_id == id and time() - self.waiting_time < 60:
-                        return None, None, None
+                        if self.prev_id == id and time() - self.waiting_time < 60:
+                            return None, None, None
 
-                    self.waiting_time = time()
+                        self.waiting_time = time()
 
-                    face_img = self.cut_face(frame, face_locations[0])
-                    return best_match_employee, self.get_timestamp(), face_img
-            else:
-                return None, None, None
+                        face_img = self.cut_face(frame, face_locations[0])
+                        return best_match_employee, self.get_timestamp(), face_img
 
-        self.process_this_frame = not self.process_this_frame
+            self.process_this_frame = not self.process_this_frame
