@@ -18,11 +18,22 @@ class CamRecognition:
 
 
     def set_known_employees_encodings(self, known_employees_encodings):
+        """
+        Устанавливает новый список известных сотрудников.
+        :param known_employees_encodings:
+        :return:
+        """
         self.known_employees_encodings = known_employees_encodings
 
 
     @staticmethod
     def cut_face(frame, face_location):
+        """
+        Обрезает кадр до лица.
+        :param frame:
+        :param face_location:
+        :return: Обрезанное изображение с лицом.
+        """
         top, right, bottom, left = face_location
         top *= 4
         right *= 4
@@ -32,11 +43,19 @@ class CamRecognition:
         return face_img
 
     @staticmethod
-    def get_timestamp():
+    def get_timestamp() -> str:
+        """
+        Создаёт timestamp в формате YYYY-MM-DD HH-MM-SS
+        :return:
+        """
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
     def frame_recognition(self):
+        """
+        Распознаёт лицо на каждом втором кадре.
+        :return: Распознанного сотрудника
+        """
         ret, frame = self.video_capture.read()
 
         if self.process_this_frame:
@@ -58,7 +77,7 @@ class CamRecognition:
                         id = best_match_employee.employee_id
 
                     if self.prev_id == id and time() - self.waiting_time < 60:
-                        return None, None, None
+                        return
 
                     self.waiting_time = time()
 

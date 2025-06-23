@@ -20,17 +20,31 @@ class MLApp:
 
 
     def fill_encoding(self, employee: Employee):
+        """
+        Вычисляет кодировку лица для сотрудника и добавляет его в таблицу 'employee_encodings'.
+        :param employee:
+        :return:
+        """
         face_encoding = face_recognition.face_encodings(employee.photo_url)[0]
         self.database.add_employee_encoding(employee.id, face_encoding)
 
 
     def fill_empty_encodings(self):
+        """
+        Находит сотрудников без кодировки лиц из таблицы 'employees' и
+        поочередно вызывает для каждого функцию 'fill_encoding()'.
+        :return:
+        """
         employees = self.database.get_employees_without_encodings()
         for employee in employees:
             self.fill_encoding(employee)
 
 
     def main(self):
+        """
+        Основной цикл программы.
+        :return:
+        """
         self.fill_empty_encodings()
         employees_encodings = self.database.get_employee_encodings()
 
