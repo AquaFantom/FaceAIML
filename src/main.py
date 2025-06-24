@@ -10,12 +10,12 @@ from time import time
 
 
 class MLApp:
-    def __init__(self, database: Database, backend: Backend):
+    def __init__(self, database: Database, backend: Backend, log_path, img_path):
         self.database = database
         self.backend = backend
         self.db_request_time = time()
-        self.log_root = "C:/Users/AquaFantom/PythonProjects/FaceAIBackend/static/accessLogs/"
-        self.img_root = "C:/Users/AquaFantom/PythonProjects/FaceAIBackend/static/employees/"
+        self.log_root = log_path
+        self.img_root = img_path
 
 
     def fill_encoding(self, employee: Employee):
@@ -26,8 +26,9 @@ class MLApp:
         """
         employee_image = face_recognition.load_image_file(self.img_root + employee.photo_url + ".png")
         face_locations = face_recognition.face_locations(employee_image)
-        face_encoding = face_recognition.face_encodings(employee_image, face_locations)[0]
-        self.database.add_employee_encoding(employee.id, face_encoding)
+        if face_locations:
+            face_encoding = face_recognition.face_encodings(employee_image, face_locations)[0]
+            self.database.add_employee_encoding(employee.id, face_encoding)
 
 
     def fill_empty_encodings(self):
@@ -52,6 +53,7 @@ class MLApp:
         print("getting encodings from db...")
         employees_encodings = self.database.get_employee_encodings()
 
+        print("openning cam...")
         video_capture = cv2.VideoCapture(0)
         cam_recognition = CamRecognition(video_capture, employees_encodings)
         print("cam opened")
@@ -81,8 +83,11 @@ if __name__ == '__main__':
     DB_URL = os.getenv('DB_URL')
     BACKEND_URL = os.getenv('BACKEND_URL')
     DB_ROOT_PASSWORD = os.getenv('ROOT_PASSWORD')
+    ACCESS_LOG_DIR = os.getenv('ACCESS_LOG_DIR')
+    EMPLOYEES_PHOTOS_DIR = os.getenv('EMPLOYEES_PHOTOS_DIR')
+
     database = Database(DB_URL)
     backend = Backend(BACKEND_URL, DB_ROOT_PASSWORD)
 
-    mlapp = MLApp(database, backend)
+    mlapp = MLApp(database, backend, ACCESS_LOG_DIR, EMPLOYEES_PHOTOS_DIR)
     mlapp.main()
