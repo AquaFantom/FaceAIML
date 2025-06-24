@@ -95,6 +95,8 @@ sudo nano /etc/dphys-swapfile
 sudo /etc/init.d/dphys-swapfile restart
 ```
 
+## Optional (for testing)
+
 Download the face recognition code examples:
 ```
 git clone --single-branch https://github.com/ageitgey/face_recognition.git
