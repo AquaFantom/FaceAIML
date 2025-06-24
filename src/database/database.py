@@ -104,32 +104,32 @@ class Database:
                 return None
 
 
-# ТЕСТ / ПРИМЕР
-
-from dotenv import load_dotenv
-import os
-from src.utils.backend_connection import Backend
-
-load_dotenv()
-DB_URL = os.getenv('DB_URL')
-BACKEND_URL = os.getenv('BACKEND_URL')
-DB_ROOT_PASSWORD = os.getenv('ROOT_PASSWORD')
-
-database = Database(DB_URL)
-backend = Backend(BACKEND_URL, DB_ROOT_PASSWORD)
-
-encoding = np.array([0.2123123, 0.21312312, 0.354353453])
-database.add_employee_encoding(1, encoding)
-
-employee_encodings = database.get_employee_encodings()
-for i in employee_encodings:
-    print(i.encoding)
-
-employees = database.get_employees_without_encodings()
-for i in employees:
-    print(i.id)
-
-res = database.add_access_log(0, "2025-12-12 12:26:10")
-if res:
-    # После добавления прохода в базу обязательно уведомляем бэк
-    backend.notify_access_log(False)
+# # ТЕСТ / ПРИМЕР
+#
+# from dotenv import load_dotenv
+# import os
+# from src.utils.backend_connection import Backend
+#
+# load_dotenv()
+# DB_URL = os.getenv('DB_URL')
+# BACKEND_URL = os.getenv('BACKEND_URL')
+# DB_ROOT_PASSWORD = os.getenv('ROOT_PASSWORD')
+#
+# database = Database(DB_URL)
+# backend = Backend(BACKEND_URL, DB_ROOT_PASSWORD)
+#
+# encoding = np.array([0.2123123, 0.21312312, 0.354353453])
+# database.add_employee_encoding(1, encoding)
+#
+# employee_encodings = database.get_employee_encodings()
+# for i in employee_encodings:
+#     print(i.encoding)
+#
+# employees = database.get_employees_without_encodings()
+# for i in employees:
+#     print(i.id)
+#
+# res = database.add_access_log(0, "2025-12-12 12:26:10")
+# if res:
+#     # После добавления прохода в базу обязательно уведомляем бэк
+#     backend.notify_access_log(False)

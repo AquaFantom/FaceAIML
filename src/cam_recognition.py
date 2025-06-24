@@ -64,8 +64,9 @@ class CamRecognition:
                 rgb_small_frame = small_frame[:, :, ::-1]
 
                 face_locations = face_recognition.face_locations(rgb_small_frame)
+                print("found", len(face_locations), "faces")
                 if face_locations:
-                    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations[0])
+                    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
                     for face_encoding in face_encodings:
                         matches = face_recognition.compare_faces([face.face_encoding for face in self.known_employees_encodings], face_encoding)
                         best_match_employee = EmployeeEncoding(id=0, employee_id=0, encoding=np.array([0]), is_access=False) # неизвестный сотрудник
@@ -78,8 +79,10 @@ class CamRecognition:
                             id = best_match_employee.employee_id
 
                         if self.prev_id == id and time() - self.waiting_time < 60:
+                            print("found same face, abort")
                             return None, None, None
 
+                        print("found employee", id)
                         self.waiting_time = time()
 
                         face_img = self.cut_face(frame, face_locations[0])

@@ -5,7 +5,7 @@ import face_recognition
 import cv2
 import numpy as np
 from cam_recognition import CamRecognition
-from src.database.database import Database, employees, employee_encodings
+from src.database.database import Database
 from src.database.schemas import EmployeeEncoding, Employee
 from src.utils.backend_connection import Backend
 from time import time
@@ -16,7 +16,8 @@ class MLApp:
         self.database = database
         self.backend = backend
         self.db_request_time = time()
-        self.log_root = "static/log/"
+        self.log_root = "C:/Users/AquaFantom/PythonProjects/FaceAIBackend/static/accessLogs/"
+        self.img_root = "C:/Users/AquaFantom/PythonProjects/FaceAIBackend/static/employees/"
 
 
     def fill_encoding(self, employee: Employee):
@@ -25,7 +26,9 @@ class MLApp:
         :param employee:
         :return:
         """
-        face_encoding = face_recognition.face_encodings(employee.photo_url)[0]
+        employee_image = face_recognition.load_image_file(self.img_root + employee.photo_url + ".png")
+        face_locations = face_recognition.face_locations(employee_image)
+        face_encoding = face_recognition.face_encodings(employee_image, face_locations)[0]
         self.database.add_employee_encoding(employee.id, face_encoding)
 
 
