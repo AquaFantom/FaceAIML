@@ -1,12 +1,10 @@
-import sys
 from dotenv import load_dotenv
 import os
 import face_recognition
 import cv2
-import numpy as np
 from cam_recognition import CamRecognition
 from src.database.database import Database
-from src.database.schemas import EmployeeEncoding, Employee
+from src.database.schemas import Employee
 from src.utils.backend_connection import Backend
 from time import time
 
@@ -39,6 +37,7 @@ class MLApp:
         :return:
         """
         employees = self.database.get_employees_without_encodings()
+        print("found", len(employees),"employees without encodings")
         for employee in employees:
             self.fill_encoding(employee)
 
@@ -48,17 +47,23 @@ class MLApp:
         Основной цикл программы.
         :return:
         """
+        print("filling empty encodings...")
         self.fill_empty_encodings()
+        print("getting encodings from db...")
         employees_encodings = self.database.get_employee_encodings()
 
         video_capture = cv2.VideoCapture(0)
         cam_recognition = CamRecognition(video_capture, employees_encodings)
+        print("cam opened")
         while True:
             if time() - self.db_request_time >= 60:
+                print("checking db changes...")
                 if not self.database.check_employees_without_encodings():
+                    print("found empty encodings - filling up...")
                     self.fill_empty_encodings()
                     employees_encodings = self.database.get_employee_encodings()
                     cam_recognition.set_known_employees_encodings(employees_encodings)
+                self.db_request_time = time()
             employee, timestamp, face_img = cam_recognition.frame_recognition()
             if employee:
                 log_id = self.database.add_access_log(employee.employee_id, timestamp)
