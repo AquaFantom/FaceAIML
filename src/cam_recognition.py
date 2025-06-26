@@ -62,6 +62,7 @@ class CamRecognition:
                         print("found same face, abort")
                         return None, None, None
                     self.prev_id = 0
+                    self.waiting_time = time()
                     return EmployeeEncoding(id=0, employee_id=0, encoding=np.array([0]), is_access=False), self.get_timestamp(), self.cut_face(frame, face_locations[0])
                 if face_locations:
                     face_encodings = face_recognition.face_encodings(frame, face_locations)
