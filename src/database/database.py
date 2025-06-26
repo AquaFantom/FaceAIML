@@ -74,8 +74,8 @@ class Database:
         :return:
         """
         with self.Session() as session:
-            stmt = select(func.count()).select_from(EmployeeEncodingsModel)
-            count = session.execute(stmt).scalar()
+            stmt = select(func.count()).select_from(EmployeeModel)
+            count = session.execute(stmt).scalar() - 1
             return count == self.encodings_count
 
     # AccessLogs

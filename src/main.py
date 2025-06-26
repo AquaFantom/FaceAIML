@@ -60,7 +60,7 @@ class MLApp:
         while True:
             if time() - self.db_request_time >= 60:
                 print("checking db changes...")
-                if self.database.check_employees_without_encodings():
+                if not self.database.check_employees_without_encodings():
                     print("found empty encodings - filling up...")
                     self.fill_empty_encodings()
                     employees_encodings = self.database.get_employee_encodings()
