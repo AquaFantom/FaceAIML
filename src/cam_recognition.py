@@ -51,6 +51,7 @@ class CamRecognition:
         Распознаёт лицо на каждом втором кадре.
         :return: Распознанного сотрудника, timestamp, изображение с лицом.
         """
+        waiting_time2 = time()
         while True:
             ret, frame = self.video_capture.read()
 
@@ -58,6 +59,7 @@ class CamRecognition:
                 face_locations = face_recognition.face_locations(frame)
                 print("found", len(face_locations), "faces")
                 if face_locations:
+                    waiting_time2 = time()
                     if not self.known_employees_encodings:
                         if self.prev_id == 0 and time() - self.waiting_time < 60:
                             print("found same face, abort")
@@ -88,5 +90,9 @@ class CamRecognition:
 
                         face_img = self.cut_face(frame, face_locations[0])
                         return best_match_employee, self.get_timestamp(), face_img
+                else:
+                    if time() - waiting_time2 < 120:
+                        waiting_time2 = time()
+                        return None, None, None
 
             self.process_this_frame = not self.process_this_frame
