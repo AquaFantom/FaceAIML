@@ -57,14 +57,14 @@ class CamRecognition:
             if self.process_this_frame:
                 face_locations = face_recognition.face_locations(frame)
                 print("found", len(face_locations), "faces")
-                if not self.known_employees_encodings:
-                    if self.prev_id == 0 and time() - self.waiting_time < 60:
-                        print("found same face, abort")
-                        return None, None, None
-                    self.prev_id = 0
-                    self.waiting_time = time()
-                    return EmployeeEncoding(id=0, employee_id=0, encoding=np.array([0]), is_access=False), self.get_timestamp(), self.cut_face(frame, face_locations[0])
                 if face_locations:
+                    if not self.known_employees_encodings:
+                        if self.prev_id == 0 and time() - self.waiting_time < 60:
+                            print("found same face, abort")
+                            return None, None, None
+                        self.prev_id = 0
+                        self.waiting_time = time()
+                        return EmployeeEncoding(id=0, employee_id=0, encoding=np.array([0]), is_access=False), self.get_timestamp(), self.cut_face(frame, face_locations[0])
                     face_encodings = face_recognition.face_encodings(frame, face_locations)
                     for face_encoding in face_encodings:
                         matches = face_recognition.compare_faces([face.encoding for face in self.known_employees_encodings], face_encoding)
