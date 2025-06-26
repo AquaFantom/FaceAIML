@@ -14,3 +14,6 @@ class Employee(BaseModel):
     id: int
     photo_url: str
     is_access: bool
+
+
+
