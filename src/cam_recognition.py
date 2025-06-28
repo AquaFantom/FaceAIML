@@ -55,7 +55,7 @@ class CamRecognition:
         while True:
             ret, frame = self.video_capture.read()
 
-            if self.process_this_frame:
+            if self.process_this_frame and frame is not None:
                 face_locations = face_recognition.face_locations(frame)
                 print("found", len(face_locations), "faces")
                 if face_locations:
